@@ -40,5 +40,6 @@ func main(){
 [MIT](https://github.com/boomhut/getlang/blob/master/LICENSE)
 
 ## Acknowledgements and Citations
+* Thanks to [rylans](https://github.com/rylans/getlang) for the original implementation of getlang in Go
 * Thanks to [abadojack](https://github.com/abadojack) for the trigram generation logic in whatlanggo
 * Cavnar, William B., and John M. Trenkle. "N-gram-based text categorization." Ann arbor mi 48113.2 (1994): 161-175.
