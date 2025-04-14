@@ -1,6 +1,6 @@
 # getlang
 
-[![GoDoc](https://godoc.org/github.com/boomhut/getlang?status.svg)](https://godoc.org/github.com/boomhut/getlang) [![Go Report Card](https://goreportcard.com/badge/github.com/boomhut/getlang)](https://goreportcard.com/report/github.com/boomhut/getlang) [![Build Status](https://travis-ci.org/boomhut/getlang.svg?branch=master)](https://travis-ci.org/boomhut/getlang) ![cover.run go](https://cover.run/go/github.com/boomhut/getlang.svg?tag=golang-1.10)
+[![GoDoc](https://godoc.org/github.com/boomhut/getlang?status.svg)](https://godoc.org/github.com/boomhut/getlang) [![Go Report Card](https://goreportcard.com/badge/github.com/boomhut/getlang)](https://goreportcard.com/report/github.com/boomhut/getlang) 
 
 getlang provides fast natural language detection in Go.
 
