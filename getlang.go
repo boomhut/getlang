@@ -5,13 +5,13 @@
 package getlang
 
 import (
-	"golang.org/x/text/language"
-	"golang.org/x/text/language/display"
 	"io"
-	"io/ioutil"
 	"math"
 	"sort"
 	"unicode"
+
+	"golang.org/x/text/language"
+	"golang.org/x/text/language/display"
 )
 
 const undeterminedRate int = 41
@@ -21,39 +21,55 @@ const scriptCountFactor int = 2
 const expOverflow = 7.09e+02
 
 var langs = map[string][]string{
-	"de":      de,
-	"en":      en,
-	"es":      es,
-	"fr":      fr,
-	"hi":      hi,
-	"hu":      hu,
-	"it":      it,
-	"nl":      nl,
-	"pl":      pl,
-	"pt":      pt,
-	"ru":      ru,
-	"sr-Latn": srLatin,
-	"sr-Cyrl": srCyr,
-	"tl":      tl,
-	"uk":      uk,
-	"vi":      vi,
+	"af":      af,      // Afrikaans
+	"cs":      cs,      // Czech
+	"ca":      ca,      // Catalan
+	"de":      de,      // German
+	"da":      da,      // Danish
+	"en":      en,      // English
+	"es":      es,      // Spanish
+	"fi":      fi,      // Finnish
+	"fr":      fr,      // French
+	"fy":      fy,      // Frisian
+	"hu":      hu,      // Hungarian
+	"it":      it,      // Italian
+	"lb":      lb,      // Luxembourgish
+	"nl":      nl,      // Dutch
+	"nn":      nno,     // Norwegian Nynorsk
+	"no":      nob,     // Norwegian Bokmål
+	"pl":      pl,      // Polish
+	"pt":      pt,      // Portuguese
+	"ru":      ru,      // Russian
+	"sk":      sk,      // Slovak
+	"sl":      sl,      // Slovenian
+	"sv":      sv,      // Swedish
+	"sr-Latn": srLatin, // Serbian Latin
+	"sr-Cyrl": srCyr,   // Serbian Cyrillic
+	"tl":      tl,      // Tagalog
+	"uk":      uk,      // Ukrainian
+	"vi":      vi,      // Vietnamese
 }
 
 var scripts = map[string][]*unicode.RangeTable{
-	"ar": {unicode.Arabic},
-	"bn": {unicode.Bengali},
-	"el": {unicode.Greek},
-	"gu": {unicode.Gujarati},
-	"he": {unicode.Hebrew},
-	"hy": {unicode.Armenian},
-	"ja": {unicode.Hiragana, unicode.Katakana},
-	"kn": {unicode.Kannada},
-	"ko": {unicode.Hangul},
-	"pa": {unicode.Gurmukhi},
-	"ta": {unicode.Tamil},
-	"te": {unicode.Telugu},
-	"th": {unicode.Thai},
-	"zh": {unicode.Han},
+	"ar": {unicode.Arabic},                     // Arabic
+	"am": {unicode.Ethiopic},                   // Amharic
+	"bn": {unicode.Bengali},                    // Bengali
+	"bo": {unicode.Tibetan},                    // Tibetan
+	"br": {unicode.Braille},                    // Braille
+	"el": {unicode.Greek},                      // Greek
+	"gu": {unicode.Gujarati},                   // Gujarati
+	"he": {unicode.Hebrew},                     // Hebrew
+	"hi": {unicode.Devanagari},                 // Hindi
+	"hy": {unicode.Armenian},                   // Armenian
+	"ja": {unicode.Hiragana, unicode.Katakana}, // Japanese
+	"kn": {unicode.Kannada},                    // Kannada
+	"ko": {unicode.Hangul},                     // Korean
+	"ml": {unicode.Malayalam},                  // Malayalam
+	"pa": {unicode.Gurmukhi},                   // Gurmukhi
+	"ta": {unicode.Tamil},                      // Tamil
+	"te": {unicode.Telugu},                     // Telugu
+	"th": {unicode.Thai},                       // Thai
+	"zh": {unicode.Han},                        // Chinese
 }
 
 // Info is the language detection result
@@ -98,7 +114,7 @@ func (info Info) SelfName() string {
 //
 // This function will read all bytes until an EOF is reached
 func FromReader(reader io.Reader) (Info, error) {
-	bytes, err := ioutil.ReadAll(reader)
+	bytes, err := io.ReadAll(reader)
 	return FromString(string(bytes)), err
 }
 

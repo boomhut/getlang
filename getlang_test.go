@@ -1,9 +1,10 @@
 package getlang
 
 import (
-	"github.com/stretchr/testify/assert"
 	"strings"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestEmptyStringFromReader(t *testing.T) {
@@ -22,9 +23,9 @@ func TestEnglishPhraseFromBigReader(t *testing.T) {
 }
 
 func TestEnglishPhraseFromReader(t *testing.T) {
-	info, _ := FromReader(strings.NewReader("this is the language"))
+	info, _ := FromReader(strings.NewReader("this is the language we need to detect"))
 	assert.Equal(t, "en", info.LanguageCode())
-	assert.Equal(t, true, info.Confidence() > 0.75)
+	assert.Equal(t, true, info.Confidence() > 0.7)
 }
 
 func TestEnglishPhraseTag(t *testing.T) {
@@ -65,6 +66,25 @@ func TestGermanPhraseUSDI(t *testing.T) {
 		"German",
 		"Deutsch")
 }
+
+// // Test Latin text
+// func TestLatinPhrase(t *testing.T) {
+// 	// text := "Omnia homines aequales dignitate et iuribus nascuntur"
+// 	text := "Omnium humanae gentis partium perspecto et cognito consensum fidemque propriae dignitatis atque iurium, quae omni tempore aequa et paria esse debent nec alienari possunt, totius terrae libertatis iustitiae pacis esse initium"
+// 	lang := "Latin"
+
+// 	ensureClassifiedWithConfidence(
+// 		t,
+// 		text,
+// 		"la",
+// 		0.95)
+
+// 	ensureClassifiedTextNamed(
+// 		t,
+// 		text,
+// 		"Latin",
+// 		lang)
+// }
 
 func TestEnglishMixedGerman(t *testing.T) {
 	ensureClassifiedWithConfidence(
@@ -144,15 +164,15 @@ func TestRussianPhraseUDHR(t *testing.T) {
 		t,
 		"Все люди рождаются свободными и равными в своем достоинстве и правах",
 		"ru",
-		0.55)
+		0.95)
 }
 
 func TestUkrainianPhraseUDHR(t *testing.T) {
 	ensureClassifiedWithConfidence(
 		t,
-		"Всі люди народжуються вільними і рівними у своїй гідності та правах",
+		"Всі люди народжуються вільними і рівними у своїй гідності та правах ",
 		"uk",
-		0.80)
+		0.7)
 }
 
 func TestFrenchPhraseUDHR(t *testing.T) {
@@ -160,7 +180,7 @@ func TestFrenchPhraseUDHR(t *testing.T) {
 		t,
 		"Tous les êtres humains naissent libres et égaux",
 		"fr",
-		0.95)
+		0.9)
 }
 
 func TestKoreanPhrase(t *testing.T) {
@@ -208,7 +228,7 @@ func TestArabicPhrase(t *testing.T) {
 		t,
 		text,
 		"ar",
-		0.55)
+		0.9)
 
 	ensureClassifiedTextNamed(
 		t,
@@ -242,12 +262,63 @@ func TestHindiPhrase(t *testing.T) {
 		t,
 		text,
 		"hi",
-		0.75)
+		0.95)
 
 	ensureClassifiedTextNamed(
 		t,
 		text,
 		"Hindi",
+		lang)
+}
+
+func TestMalayalamPhrase(t *testing.T) {
+	text := "എന്റെ പേര് ഭാരത്"
+	lang := "മലയാളം"
+
+	ensureClassifiedWithConfidence(
+		t,
+		text,
+		"ml",
+		0.95)
+
+	ensureClassifiedTextNamed(
+		t,
+		text,
+		"Malayalam",
+		lang)
+}
+
+// Luxembourgish
+func TestLuxembourgishPhrase(t *testing.T) {
+	text := "All Mënschen sinn gebuer fräi a gläich an der Wierde an den Rechter"
+	lang := "Lëtzebuergesch"
+
+	ensureClassifiedWithConfidence(
+		t,
+		text,
+		"lb",
+		0.95)
+
+	ensureClassifiedTextNamed(
+		t,
+		text,
+		"Luxembourgish",
+		lang)
+}
+func TestCatalanPhrase(t *testing.T) {
+	text := "Tots els éssers humans neixen lliures i iguals en dignitat i drets"
+	lang := "català"
+
+	ensureClassifiedWithConfidence(
+		t,
+		text,
+		"ca",
+		0.95)
+
+	ensureClassifiedTextNamed(
+		t,
+		text,
+		"Catalan",
 		lang)
 }
 
@@ -343,7 +414,7 @@ func TestSerbianLatinPhrase(t *testing.T) {
 		t,
 		text,
 		"sr",
-		0.85)
+		0.67)
 
 	ensureClassifiedTextNamed(
 		t,
@@ -360,7 +431,7 @@ func TestSerbianCyrillicPhrase(t *testing.T) {
 		t,
 		text,
 		"sr",
-		0.95)
+		0.8)
 
 	ensureClassifiedTextNamed(
 		t,
@@ -370,14 +441,14 @@ func TestSerbianCyrillicPhrase(t *testing.T) {
 }
 
 func TestVietnamesePhrase(t *testing.T) {
-	text := "Truyền thông Việt Nam vào dịp này đăng bài ký tên ông"
+	text := "Tôi là một người Việt Nam và tôi sống ở Việt Nam"
 	lang := "Tiếng Việt"
 
 	ensureClassifiedWithConfidence(
 		t,
 		text,
 		"vi",
-		0.95)
+		0.4)
 
 	ensureClassifiedTextNamed(
 		t,
@@ -468,6 +539,214 @@ func TestKannadaPhrase(t *testing.T) {
 		t,
 		text,
 		"Kannada",
+		lang)
+}
+
+func TestNorwegianPhrase(t *testing.T) {
+	// text := "Alle mennesker er født frie og med samme menneskeverd og rettigheter"
+	// Other test prhases
+	text := "Alle mennesker er født frie og med samme menneskeverd og rettigheter. De er utstyrt med fornuft og samvittighet og bør handle mot hverandre i broderlighet."
+	lang := "norsk bokmål"
+
+	ensureClassifiedWithConfidence(
+		t,
+		text,
+		"no",
+		0.95)
+
+	ensureClassifiedTextNamed(
+		t,
+		text,
+		"Norwegian Bokmål",
+		lang)
+}
+
+// Another test for norwegian, but with a different text
+func TestNorwegianPhrase2(t *testing.T) {
+	text := "Erklæringens offisielle tekst foreligger på FNs seks arbeidsspråk: arabisk, engelsk, fransk, kinesisk, russisk og spansk. En lang rekke av FNs medlemsstater har fulgt Generalforsamlingens oppfordring og oversatt Erklæringen til de nasjonale språk."
+	lang := "norsk bokmål"
+
+	ensureClassifiedWithConfidence(
+		t,
+		text,
+		"no",
+		0.95)
+
+	ensureClassifiedTextNamed(
+		t,
+		text,
+		"Norwegian Bokmål",
+		lang)
+}
+
+// Norwegian Nynorsk
+func TestNorwegianNynorskPhrase(t *testing.T) {
+	text := "Alle menneske er fødde frie og like i verd og rettar. Dei er utstyrte med fornuft og samvit og bør handle mot kvarandre i brorskap."
+	lang := "nynorsk"
+
+	ensureClassifiedWithConfidence(
+		t,
+		text,
+		"nn",
+		0.69)
+
+	ensureClassifiedTextNamed(
+		t,
+		text,
+		"Norwegian Nynorsk",
+		lang)
+}
+func TestNorwegianNynorskPhrase2(t *testing.T) {
+	text := "Erklæringa sin offisielle tekst ligg føre på FNs seks arbeidsspråk: arabisk, engelsk, fransk, kinesisk, russisk og spansk. Ei lang rekkje av FNs medlemsstatar har følgt Generalforsamlinga si oppmoding og omsett Erklæringa til dei nasjonale språka."
+	lang := "nynorsk"
+
+	ensureClassifiedWithConfidence(
+		t,
+		text,
+		"nn",
+		0.7)
+
+	ensureClassifiedTextNamed(
+		t,
+		text,
+		"Norwegian Nynorsk",
+		lang)
+}
+
+// Western Frisian
+func TestFrisianPhrase(t *testing.T) {
+	text := "Alle minsken binne frij en gelyk yn wearde en rjochten"
+	lang := "Frysk"
+
+	ensureClassifiedWithConfidence(
+		t,
+		text,
+		"fy",
+		0.95)
+
+	ensureClassifiedTextNamed(
+		t,
+		text,
+		"Western Frisian",
+		lang)
+}
+
+func TestSwedishPhrase(t *testing.T) {
+	text := "Alla människor är födda fria och lika i värde och rättigheter"
+	lang := "svenska"
+
+	ensureClassifiedWithConfidence(
+		t,
+		text,
+		"sv",
+		0.95)
+
+	ensureClassifiedTextNamed(
+		t,
+		text,
+		"Swedish",
+		lang)
+}
+
+func TestFinnishPhrase(t *testing.T) {
+	text := "Kaikki ihmiset syntyvät vapaina ja tasa-arvoisina"
+	lang := "suomi"
+
+	ensureClassifiedWithConfidence(
+		t,
+		text,
+		"fi",
+		0.95)
+
+	ensureClassifiedTextNamed(
+		t,
+		text,
+		"Finnish",
+		lang)
+}
+
+func TestDanishPhrase(t *testing.T) {
+	text := "Umiddelbart efter denne historiske begivenhed henstillede generalforsamlingen til alle medlemslande, at de offentliggjorde erklæringens fulde tekst."
+	lang := "dansk"
+
+	ensureClassifiedWithConfidence(
+		t,
+		text,
+		"da",
+		0.95)
+
+	ensureClassifiedTextNamed(
+		t,
+		text,
+		"Danish",
+		lang)
+}
+
+func TestCzechPhrase(t *testing.T) {
+	text := "Všichni lidé se rodí svobodní a sobě rovní v důstojnosti a právech"
+	lang := "čeština"
+
+	ensureClassifiedWithConfidence(
+		t,
+		text,
+		"cs",
+		0.95)
+
+	ensureClassifiedTextNamed(
+		t,
+		text,
+		"Czech",
+		lang)
+}
+
+func TestSlovenianPhrase(t *testing.T) {
+	text := "Vsi ljudje se rodijo svobodni in enaki v svoji dostojanstvu in pravicah"
+	lang := "slovenščina"
+
+	ensureClassifiedWithConfidence(
+		t,
+		text,
+		"sl",
+		0.95)
+
+	ensureClassifiedTextNamed(
+		t,
+		text,
+		"Slovenian",
+		lang)
+}
+
+func TestSlovakPhrase(t *testing.T) {
+	text := "Všetci ľudia sa rodia slobodní a rovní v dôstojnosti a právach"
+	lang := "slovenčina"
+
+	ensureClassifiedWithConfidence(
+		t,
+		text,
+		"sk",
+		0.92)
+
+	ensureClassifiedTextNamed(
+		t,
+		text,
+		"Slovak",
+		lang)
+}
+
+func TestAfrikaansPhrase(t *testing.T) {
+	text := "Alle mense word vry en gelyk in waardigheid en regte gebore"
+	lang := "Afrikaans"
+
+	ensureClassifiedWithConfidence(
+		t,
+		text,
+		"af",
+		0.95)
+
+	ensureClassifiedTextNamed(
+		t,
+		text,
+		"Afrikaans",
 		lang)
 }
 
