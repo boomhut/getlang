@@ -8,6 +8,7 @@ import (
 	"io"
 	"math"
 	"sort"
+	"strings"
 	"unicode"
 
 	"golang.org/x/text/language"
@@ -18,6 +19,8 @@ const undeterminedRate int = 41
 const undetermined string = "und"
 const rescale = 0.5
 const scriptCountFactor int = 2
+const keywordWeight int = 8
+const minScriptCoverage = 0.3
 const expOverflow = 7.09e+02
 
 var langs = map[string][]string{
@@ -51,25 +54,55 @@ var langs = map[string][]string{
 }
 
 var scripts = map[string][]*unicode.RangeTable{
-	"ar": {unicode.Arabic},                     // Arabic
-	"am": {unicode.Ethiopic},                   // Amharic
-	"bn": {unicode.Bengali},                    // Bengali
-	"bo": {unicode.Tibetan},                    // Tibetan
-	"br": {unicode.Braille},                    // Braille
-	"el": {unicode.Greek},                      // Greek
-	"gu": {unicode.Gujarati},                   // Gujarati
-	"he": {unicode.Hebrew},                     // Hebrew
-	"hi": {unicode.Devanagari},                 // Hindi
-	"hy": {unicode.Armenian},                   // Armenian
-	"ja": {unicode.Hiragana, unicode.Katakana}, // Japanese
-	"kn": {unicode.Kannada},                    // Kannada
-	"ko": {unicode.Hangul},                     // Korean
-	"ml": {unicode.Malayalam},                  // Malayalam
-	"pa": {unicode.Gurmukhi},                   // Gurmukhi
-	"ta": {unicode.Tamil},                      // Tamil
-	"te": {unicode.Telugu},                     // Telugu
-	"th": {unicode.Thai},                       // Thai
-	"zh": {unicode.Han},                        // Chinese
+	"ar":      {unicode.Arabic},                     // Arabic
+	"am":      {unicode.Ethiopic},                   // Amharic
+	"bn":      {unicode.Bengali},                    // Bengali
+	"bo":      {unicode.Tibetan},                    // Tibetan
+	"br":      {unicode.Braille},                    // Braille
+	"el":      {unicode.Greek},                      // Greek
+	"gu":      {unicode.Gujarati},                   // Gujarati
+	"he":      {unicode.Hebrew},                     // Hebrew
+	"hi":      {unicode.Devanagari},                 // Hindi
+	"hy":      {unicode.Armenian},                   // Armenian
+	"ja":      {unicode.Hiragana, unicode.Katakana}, // Japanese
+	"kn":      {unicode.Kannada},                    // Kannada
+	"ko":      {unicode.Hangul},                     // Korean
+	"ml":      {unicode.Malayalam},                  // Malayalam
+	"pa":      {unicode.Gurmukhi},                   // Gurmukhi
+	"ta":      {unicode.Tamil},                      // Tamil
+	"te":      {unicode.Telugu},                     // Telugu
+	"th":      {unicode.Thai},                       // Thai
+	"zh":      {unicode.Han},                        // Chinese
+	"ru":      {unicode.Cyrillic},                   // Russian (Cyrillic)
+	"uk":      {unicode.Cyrillic},                   // Ukrainian (Cyrillic)
+	"sr-Cyrl": {unicode.Cyrillic},                   // Serbian Cyrillic
+}
+
+type runeBonus struct {
+	lang   string
+	weight int
+}
+
+var runeBonuses = map[rune][]runeBonus{
+	'ї': {{lang: "uk", weight: 5}},
+	'є': {{lang: "uk", weight: 5}},
+	'ґ': {{lang: "uk", weight: 6}},
+	'і': {{lang: "uk", weight: 3}},
+	'љ': {{lang: "sr-Cyrl", weight: 5}},
+	'њ': {{lang: "sr-Cyrl", weight: 5}},
+	'ђ': {{lang: "sr-Cyrl", weight: 5}},
+	'ћ': {{lang: "sr-Cyrl", weight: 5}},
+	'џ': {{lang: "sr-Cyrl", weight: 5}},
+	'ј': {{lang: "sr-Cyrl", weight: 3}},
+	'ы': {{lang: "ru", weight: 4}},
+	'э': {{lang: "ru", weight: 4}},
+	'ё': {{lang: "ru", weight: 4}},
+	'ъ': {{lang: "ru", weight: 4}},
+}
+
+var keywordBonuses = map[string][]string{
+	"ru": {"рус", "рос"},
+	"uk": {"укр"},
 }
 
 // Info is the language detection result
@@ -132,6 +165,9 @@ func FromString(text string) Info {
 		matchScript(k, text, langMatches, v...)
 	}
 
+	matchRuneBonuses(text, langMatches)
+	matchKeywordBonuses(text, langMatches)
+
 	smx := softMax(langMatches)
 	maxk := maxKey(langMatches)
 	return Info{maxk, smx[maxk], language.MustParse(maxk)}
@@ -170,9 +206,40 @@ func maxKey(mapping map[string]int) string {
 }
 
 func matchScript(langName, text string, matches map[string]int, ranges ...*unicode.RangeTable) {
+	var total, hits int
 	for _, r := range text {
+		total++
 		if unicode.In(r, ranges...) {
-			matches[langName] += scriptCountFactor
+			hits++
+		}
+	}
+	if hits == 0 {
+		return
+	}
+	if float64(hits)/float64(total) < minScriptCoverage {
+		return
+	}
+	matches[langName] += hits * scriptCountFactor
+}
+
+func matchRuneBonuses(text string, matches map[string]int) {
+	for _, r := range text {
+		lower := unicode.ToLower(r)
+		if bonuses, ok := runeBonuses[lower]; ok {
+			for _, bonus := range bonuses {
+				matches[bonus.lang] += bonus.weight
+			}
+		}
+	}
+}
+
+func matchKeywordBonuses(text string, matches map[string]int) {
+	lower := strings.ToLower(text)
+	for lang, keywords := range keywordBonuses {
+		for _, keyword := range keywords {
+			if strings.Contains(lower, keyword) {
+				matches[lang] += keywordWeight
+			}
 		}
 	}
 }
